@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HTML Form</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+                background-color: #f0f0f0;
+            }
+
+            form {
+                width: 400px;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px
+                    rgba(0, 0, 0, 0.1);
+            }
+
+            fieldset {
+                border: 1px solid black;
+                padding: 10px;
+                margin: 0;
+            }
+
+            legend {
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea,
+            input[type="date"] {
+                width: calc(100% - 20px);
+                padding: 8px;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            input[type="radio"] {
+                margin-left: 20px;
+            }
+
+            input[type="submit"] {
+                padding: 10px 20px;
+
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            #errorBox {
+                color: red;          /* Red color for error messages */
+                font-size: 20pt;    /* Increase font size to 20pt */
+                font-weight: bold;   /* Make the text bold */
+                border: 2px solid red; /* Draw a red border around the errorbox */
+                padding: 10px;      /* Add some padding inside the errorbox */
+                margin-bottom: 10px; /* Space below the error box */
+                border-radius: 5px; /* Optional: rounded corners */
+            }
+        </style>
+        
+    </head>
+    <body>
+        <form id="form" >
+            <fieldset>
+
+                <div id="errorBox" style="padding-bottom: 25px;"></div>
+
+                <label>Enter your full name</label>
+                <input type="text" id="name" name="name" required />
+                <div class = "error" ></div>
+                <label>Enter your email</label>
+                <input type="email" name="email" value = "smsracer0@gmail.com" required/>
+
+                <label>Enter your password</label>
+                <input type="password" id="pass" name="pass" value = "Ab1230000000!"required/>
+
+                <label>Confirm your password</label>
+                <input type="password" id="confirmPass" name="confirmPass" value = "Ab1230000000!" required />
+
+                <label>Enter your gender</label>
+                <input class="radioClass" type="radio" name="gender" value="male" required />Male
+                <input class="radioClass" type="radio" name="gender" value="female" />Female
+                <input class="radioClass" type="radio" name="gender" value="other" />Other
+                <br><br>
+                <label>Enter your Date of Birth</label>
+                <input type="date" name="dob" required/>
+                <br><br>
+                <label>Select Interests</label>
+                <input type="checkbox" name="interests" value="motorcycles" />Motocycles<br>
+                <input type="checkbox" name="interests" value="fish" />Fish<br>
+                <input type="checkbox" name="interests" value="birds" />Birds<br>
+                <input type="checkbox" name="interests" value="camping" />Camping<br>
+                <input type="checkbox" name="interests" value="travel" />Travel<br>
+                <input type="checkbox" name="interests" value="computers" />Computers<br>
+                <br>
+                <label>Enter your Address:</label>
+                <textarea name="address" placeholder="Enter your address" required></textarea>
+                <br><br>
+                <button type="submit">Submit</button>
+                <br><br>
+            </fieldset>
+        </form>
+    </body>
+    <script>
+        document.getElementById('form').addEventListener('submit', function (event) {
+        event.preventDefault()
+        const errorBox = document.getElementById('errorBox');
+        errorBox.innerHTML = ''
+        const form = document.getElementById('form');
+        if (submitMe()){
+            form.submit()
+        }
+        })
+        function isEmpty(value) {
+            if (value === '' || value === null || value === undefined || Number.isNaN(value)){
+                return true
+            }
+            return false
+}
+        function passValidate(pass,confirmPass){
+            if((pass =>{
+                    const hasUppercase = /[A-Z]/.test(pass)   
+                    const hasLowercase = /[a-z]/.test(pass)   
+                    const hasNumber = /\d/.test(pass)         
+                    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(pass)
+                    return (hasUppercase && hasLowercase && hasNumber && hasSpecialChar)
+                })(pass) === false){ // if statement start
+                    errorBox.innerHTML = "Invalid format"
+                    return false
+            }
+            if (pass.length < 10){
+                errorBox.innerHTML = "Less than 10 characters"
+                return false//"Passwords must be at least ten characters "
+            }
+            if (confirmPass !== pass){
+                errorBox.innerHTML = "Passwords don't match" 
+                return false //"Passwords don't match"
+            }
+            return true
+
+        }
+        function nameValidate(name){
+            if(!name.includes(" ")){
+                errorBox.innerHTML = "NoSPACES"
+                return false
+            }
+            nameAR = name.split(" ")
+            if(nameAR.length != 2){
+                errorBox.innerHTML = "Wrong Structure"
+                return false
+            }
+            if(nameAR[0].length < 2 || nameAR[1].length < 2){
+                errorBox.innerHTML = "First or last too short"
+                return false
+            }
+            return true
+        }
+        function emailValidate(email){
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            return re.test(email)
+        }
+        function addressValidate(address){
+            if(address.split(" ").length < 2 ){
+                return false
+            }
+            return true
+        }
+        function submitMe(){
+            //secondary validation and data checks
+            if (!confirm("Is this information correct?")){
+                return
+            }
+            const errorBox = document.getElementById('errorBox')
+            const name = document.getElementById('name').value.trim()
+            const email = document.getElementsByName('email')[0].value.trim()
+            const pass = document.getElementById('pass').value
+            const confirmPass = document.getElementById('confirmPass').value
+            const address = document.getElementsByName('address')[0].value.trim()
+            const genderSelector = document.querySelector('input[name="gender"]:checked')
+            const gender = genderSelector ? genderSelector.value : null
+            const date = document.getElementsByName("dob")[0].value
+            let elements = [name, email, pass, confirmPass, address, gender, date]
+            if (passValidate(pass,confirmPass)){console.log("Good pass")}else{return false}
+            if (nameValidate(name)){console.log("Good name")}else{return false}
+            if (emailValidate(email)){console.log("Good email")}else{return false}
+            if (addressValidate(address)){console.log("Good address")}else{return false}
+            for(const x of elements){
+                if (isEmpty(x) == false){
+                    console.log(x)
+                }
+                else{
+                    errorBox.innerHTML = 'Required fields are empty'
+                    return false
+                }
+            } // for end
+            return true
+        } // function end
+    </script>
+</html>
