@@ -82,29 +82,29 @@
                 <div id="errorBox" style="padding-bottom: 25px;"></div>
 
                 <label>Enter your full name</label>
-                <input type="text" id="name" name="name" value = "Shawn Seltner" required />
+                <input type="text" id="name" name="name" value = "Shawn Seltner" />
                 <div class="error" name="nameError"></div>
 
                 <label>Enter your email</label>
-                <input type="email" name="email" value = "smsracer0@gmail.com" required/>
+                <input type="email" name="email" value = "smsracer0@gmail.com"/>
                 <div class="error" name="emailError"></div>
 
                 <label>Enter your password</label>
-                <input type="password" id="pass" name="pass" value = "Ab1230000000!"required/>
+                <input type="password" id="pass" name="pass" value = "Ab1230000000!"/>
                 <div class="error" name="passError"></div>
 
                 <label>Confirm your password</label>
-                <input type="password" id="confirmPass" name="confirmPass" value = "Ab1230000000!" required />
+                <input type="password" id="confirmPass" name="confirmPass" value = "Ab1230000000!" />
                 <div class="error" name="passCError"></div>
 
                 <label>Enter your gender</label>
-                <input class="radioClass" type="radio" name="gender" value="male" required />Male
+                <input class="radioClass" type="radio" name="gender" value="male" />Male
                 <input class="radioClass" type="radio" name="gender" value="female" />Female
                 <input class="radioClass" type="radio" name="gender" value="other" />Other
                 <br><br>
 
                 <label>Enter your Date of Birth</label>
-                <input type="date" name="dob" required/>
+                <input type="date" name="dob"/>
                 <div class="error" name="dobError"></div>
                 <br><br>
                 <label>Select Interests</label>
@@ -116,7 +116,7 @@
                 <input type="checkbox" name="interests" value="computers" />Computers<br>
                 <br>
                 <label>Enter your Address:</label>
-                <textarea name="address" placeholder="Enter your address" required>cry some more</textarea>
+                <textarea name="address" placeholder="Enter your address">cry some more</textarea>
                 <div class="error" name="addressError"></div>
                 <br><br>
                 <button type="submit">Submit</button>
@@ -203,10 +203,15 @@
         }
         function emailValidate(email){
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            return re.test(email)
+            if(!re.test(email)){
+                message = "Email format incorrect<br>"; highlightField(document.getElementsByName('emailError')[0], message);eBoxMsg += message
+                return false
+            }
+            return true
         }
         function addressValidate(address){
             if(address.split(" ").length < 2 ){
+                message = "Address format incorrect<br>"; highlightField(document.getElementsByName('addressError')[0], message);eBoxMsg += message
                 return false
             }
             return true
@@ -235,7 +240,7 @@
                 if (isEmpty(x) == false){
                     console.log(x)
                 }else{
-                    errorBox.innerHTML += 'Required fields are empty<br>'
+                    eBoxMsg += 'Required fields are empty<br>'
                     break
                 }
             } // for end
