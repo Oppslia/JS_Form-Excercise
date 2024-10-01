@@ -101,6 +101,7 @@
                 <input class="radioClass" type="radio" name="gender" value="male" />Male
                 <input class="radioClass" type="radio" name="gender" value="female" />Female
                 <input class="radioClass" type="radio" name="gender" value="other" />Other
+                <div class="error" name="genderError"></div>
                 <br><br>
 
                 <label>Enter your Date of Birth</label>
@@ -130,7 +131,21 @@
         const errorBox = document.getElementById('errorBox')
         errorBox.innerHTML = ''
         const form = document.getElementById('form')
-        
+        function clearFields(){
+            let elementsN = ["name", "email", "pass", "confirmPass", "address", "gender", "dob"]
+            for(let i= 0;i < elementsN.length;i++){
+                try{
+                document.getElementsByName(`${elementsN[i]}Error`)[0].innerHTML = ''
+                document.getElementsByName(`${elementsN[i]}Error`)[0].classList.remove('error-border')
+                }catch{}
+            }
+        }
+        try{
+            clearFields()
+        }catch(error){
+            console.error('Error clearing fields:', error)
+
+        }
         if (submitMe()){
                 
             var MD5 = function(d){var r = M(V(Y(X(d),8*d.length)));
@@ -150,53 +165,57 @@
             passwordField.value = MD5(passwordField.value)
             form.submit()
         }
+
+        
         })
-        function highlightField(field,msg) {
+        
+        function highlightField(field, message){
             field.classList.add('error-border')
             field.innerHTML = message
         }
-        function isEmpty(value) {
+        function isEmpty(value){
             if (value === '' || value === null || value === undefined || Number.isNaN(value)){
                 return true
             }
             return false
             }
-            function passValidate(pass, confirmPass){
-                let isValid = true;
-                
-                if((pass =>{
-                        const hasUppercase = /[A-Z]/.test(pass)   
-                        const hasLowercase = /[a-z]/.test(pass)   
-                        const hasNumber = /\d/.test(pass)         
-                        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(pass)
-                        return (hasUppercase && hasLowercase && hasNumber && hasSpecialChar)
-                    })(pass) === false){ // if statement start
-                        message = "Invalid Format<br>"; highlightField(document.getElementsByName('passError')[0], message, true);eBoxMsg += message
-                        isValid = false
-                }
-                else if (pass.length < 10){ // else if to skip running if password is already invalid format
-                    message = "Less than 10 characters<br>"; highlightField(document.getElementsByName('passError')[0], message, true);eBoxMsg += message
-                    isValid = false//"Passwords must be at least ten characters "
-                }
-                if (confirmPass !== pass){
-                    message = "Passwords don't match<br>"; highlightField(document.getElementsByName('passCError')[0], message, true);eBoxMsg += message
-                    isValid = false //"Passwords don't match"
-                }
-                if(!isValid){
-                    return false
-                }
-                
-                return true
-
+        function passValidate(pass, confirmPass){
+            let isValid = true;
+            
+            if((pass =>{
+                    const hasUppercase = /[A-Z]/.test(pass)   
+                    const hasLowercase = /[a-z]/.test(pass)   
+                    const hasNumber = /\d/.test(pass)         
+                    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(pass)
+                    return (hasUppercase && hasLowercase && hasNumber && hasSpecialChar)
+                })(pass) === false){ // if statement start
+                    let message = "Invalid Format<br>"; 
+                    highlightField(document.getElementsByName('passError')[0], message);eBoxMsg += message;
+                    isValid = false
             }
+            else if (pass.length < 10){ // else if to skip running if password is already invalid format
+                let message = "Less than 10 characters<br>"; highlightField(document.getElementsByName('passError')[0], message);eBoxMsg += message
+                isValid = false//"Passwords must be at least ten characters "
+            }
+            if (confirmPass !== pass){
+                let message = "Passwords don't match<br>"; highlightField(document.getElementsByName('passCError')[0], message);eBoxMsg += message
+                isValid = false //"Passwords don't match"
+            }
+            if(!isValid){
+                return false
+            }
+            
+            return true
+
+        }
         function nameValidate(name){
             nameAR = name.split(" ")
             if(nameAR.length != 2){
-                message = "Invalid Name Structure<br>"; highlightField(document.getElementsByName('nameError')[0], message);eBoxMsg += message
+                let message = "Invalid Name Structure<br>"; highlightField(document.getElementsByName('nameError')[0], message);eBoxMsg += message
                 return false
             }
             if(nameAR[0].length < 2 || nameAR[1].length < 2){
-                message = "First or Last name too short<br>"; highlightField(document.getElementsByName('nameError')[0], message);eBoxMsg += message
+                let message = "First or Last name too short<br>"; highlightField(document.getElementsByName('nameError')[0], message);eBoxMsg += message
                 return false
             }
             return true
@@ -204,14 +223,14 @@
         function emailValidate(email){
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             if(!re.test(email)){
-                message = "Email format incorrect<br>"; highlightField(document.getElementsByName('emailError')[0], message);eBoxMsg += message
+                let message = "Email format incorrect<br>"; highlightField(document.getElementsByName('emailError')[0], message);eBoxMsg += message
                 return false
             }
             return true
         }
         function addressValidate(address){
             if(address.split(" ").length < 2 ){
-                message = "Address format incorrect<br>"; highlightField(document.getElementsByName('addressError')[0], message);eBoxMsg += message
+                let message = "Address format incorrect<br>"; highlightField(document.getElementsByName('addressError')[0], message);eBoxMsg += message
                 return false
             }
             return true
@@ -232,17 +251,21 @@
             const gender = genderSelector ? genderSelector.value : null
             const date = document.getElementsByName("dob")[0].value
             let elements = [name, email, pass, confirmPass, address, gender, date]
+            let elementsN = ["name", "email", "pass", "confirmPass", "address", "gender", "dob"]
             const validityChecks = [passValidate(pass, confirmPass), nameValidate(name), emailValidate(email), addressValidate(address)]
             let passChecks = true
             for(const check of validityChecks){if(!check){passChecks = false}}
-            
+            stupidCounter = 0
             for(const x of elements){
                 if (isEmpty(x) == false){
                     console.log(x)
+                    stupidCounter++
                 }else{
+                    let message = `${elementsN[stupidCounter]} is empty`
+                    highlightField(document.getElementsByName(`${elementsN[stupidCounter]}Error`)[0], message)
                     eBoxMsg += 'Required fields are empty<br>'
                     passChecks = false
-                    break
+                    stupidCounter++
                 }
             } // for end
             if(!passChecks){
